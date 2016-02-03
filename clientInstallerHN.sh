@@ -30,28 +30,28 @@ if [[ $hn1 -eq 0 ]]; then
     clusterhosts=${clusterhosts//\"}
     clusterhosts=${clusterhosts/,/ }
 
-
-    curl -u $clusterUN:$clusterPS -H 'X-Requested-By: ambari' -X POST -d '
-    {
-       "RequestInfo":{
-          "command":"RESTART",
-          "context":"Restart HDFS Client and YARN Client",
-          "operation_level":{
-             "level":"HOST",
-             "cluster_name":"$clusterName"
+data="{
+       \"RequestInfo\":{
+          \"command\":\"RESTART\",
+          \"context\":\"Restart HDFS Client and YARN Client\",
+          \"operation_level\":{
+             \"level\":\"HOST\",
+             \"cluster_name\":\"$clusterName\"
           }
        },
-       "Requests/resource_filters":[
+       \"Requests/resource_filters\":[
           {
-             "service_name":"YARN",
-             "component_name":"YARN_CLIENT",
-             "hosts":"$clusterhosts"
+             \"service_name\":\"YARN\",
+             \"component_name\":\"YARN_CLIENT\",
+             \"hosts\":\"$clusterhosts\"
           },
           {
-             "service_name":"HDFS",
-             "component_name":"HDFS_CLIENT",
-             "hosts":"$clusterhosts"
+             \"service_name\":\"HDFS\",
+             \"component_name":"HDFS_CLIENT\",
+             \"hosts\":\"$clusterhosts\"
           }
        ]
-    }' http://localhost:8080/api/v1/clusters/$clusterName/requests
+    }"
+
+    curl -u $clusterUN:$clusterPS -H 'X-Requested-By: ambari' -X POST -d '$data' http://localhost:8080/api/v1/clusters/$clusterName/requests
 fi
