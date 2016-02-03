@@ -13,7 +13,8 @@ wget https://github.com/psf/azureARMFusion/blob/master/fusion-hdi-2.2.8-client-h
 
 dpkg -i /tmp/hdi-client.deb
 
-hn1=$(netstat -nap|grep 8080 > /dev/null && echo $?)
+curl -s localhost:8080 > /dev/null
+hn1=$?
 if [[ $hn1 -eq 0 ]]; then
     # if on HN1
     /var/lib/ambari-server/resources/scripts/configs.sh -u $clusterUN -p $clusterPS set localhost $clusterName core-site "fusion.underlyingFs" "$wasbURI"
