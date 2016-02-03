@@ -47,7 +47,7 @@ data="{
           },
           {
              \"service_name\":\"HDFS\",
-             \"component_name":"HDFS_CLIENT\",
+             \"component_name\":\"HDFS_CLIENT\",
              \"hosts\":\"$clusterhosts\"
           }
        ]
