@@ -13,41 +13,44 @@ wget https://github.com/psf/azureARMFusion/blob/master/fusion-hdi-2.2.8-client-h
 
 dpkg -i /tmp/hdi-client.deb
 
-# if on HN
-/var/lib/ambari-server/resources/scripts/configs.sh -u $clusterUN -p $clusterPS set localhost $clusterName core-site "fusion.underlyingFs" "$wasbURI"
-/var/lib/ambari-server/resources/scripts/configs.sh -u $clusterUN -p $clusterPS set localhost $clusterName core-site "fs.wasb.impl" "org.apache.hadoop.fs.azure.NativeAzureFileSystem"
-/var/lib/ambari-server/resources/scripts/configs.sh -u $clusterUN -p $clusterPS set localhost $clusterName core-site "fs.AbstractFileSystem.fusion.impl" "com.wandisco.fs.client.FusionAbstractFs"
-/var/lib/ambari-server/resources/scripts/configs.sh -u $clusterUN -p $clusterPS set localhost $clusterName core-site "fs.fusion.server" "$edgeNodeIP:8023"
-/var/lib/ambari-server/resources/scripts/configs.sh -u $clusterUN -p $clusterPS set localhost $clusterName core-site "fs.fusion.impl" "com.wandisco.fs.client.FusionHcfs"
-/var/lib/ambari-server/resources/scripts/configs.sh -u $clusterUN -p $clusterPS set localhost $clusterName yarn-site "fs.AbstractFileSystem.fusion.impl" "com.wandisco.fs.client.FusionAbstractFs"
+hn1=$(netstat -nap|grep 8080 > /dev/null && echo $?)
+if [[ $hn1 -eq 0 ]]; then
+    # if on HN1
+    /var/lib/ambari-server/resources/scripts/configs.sh -u $clusterUN -p $clusterPS set localhost $clusterName core-site "fusion.underlyingFs" "$wasbURI"
+    /var/lib/ambari-server/resources/scripts/configs.sh -u $clusterUN -p $clusterPS set localhost $clusterName core-site "fs.wasb.impl" "org.apache.hadoop.fs.azure.NativeAzureFileSystem"
+    /var/lib/ambari-server/resources/scripts/configs.sh -u $clusterUN -p $clusterPS set localhost $clusterName core-site "fs.AbstractFileSystem.fusion.impl" "com.wandisco.fs.client.FusionAbstractFs"
+    /var/lib/ambari-server/resources/scripts/configs.sh -u $clusterUN -p $clusterPS set localhost $clusterName core-site "fs.fusion.server" "$edgeNodeIP:8023"
+    /var/lib/ambari-server/resources/scripts/configs.sh -u $clusterUN -p $clusterPS set localhost $clusterName core-site "fs.fusion.impl" "com.wandisco.fs.client.FusionHcfs"
+    /var/lib/ambari-server/resources/scripts/configs.sh -u $clusterUN -p $clusterPS set localhost $clusterName yarn-site "fs.AbstractFileSystem.fusion.impl" "com.wandisco.fs.client.FusionAbstractFs"
 
-sleep 10
-unset IFS
-clusterhosts=$(curl -s -u $clusterUN:$clusterPS http://localhost:8080/api/v1/clusters/$clusterName/hosts|grep host_name|awk '{print $3}')
-clusterhosts=${clusterhosts//\"}
-clusterhosts=${clusterhosts/,/ }
+    sleep 10
+    unset IFS
+    clusterhosts=$(curl -s -u $clusterUN:$clusterPS http://localhost:8080/api/v1/clusters/$clusterName/hosts|grep host_name|awk '{print $3}')
+    clusterhosts=${clusterhosts//\"}
+    clusterhosts=${clusterhosts/,/ }
 
 
-curl -u $clusterUN:$clusterPS -H 'X-Requested-By: ambari' -X POST -d '
-{
-   "RequestInfo":{
-      "command":"RESTART",
-      "context":"Restart HDFS Client and YARN Client",
-      "operation_level":{
-         "level":"HOST",
-         "cluster_name":"$clusterName"
-      }
-   },
-   "Requests/resource_filters":[
-      {
-         "service_name":"YARN",
-         "component_name":"YARN_CLIENT",
-         "hosts":"$clusterhosts"
-      },
-      {
-         "service_name":"HDFS",
-         "component_name":"HDFS_CLIENT",
-         "hosts":"$clusterhosts"
-      }
-   ]
-}' http://localhost:8080/api/v1/clusters/$clusterName/requests
+    curl -u $clusterUN:$clusterPS -H 'X-Requested-By: ambari' -X POST -d '
+    {
+       "RequestInfo":{
+          "command":"RESTART",
+          "context":"Restart HDFS Client and YARN Client",
+          "operation_level":{
+             "level":"HOST",
+             "cluster_name":"$clusterName"
+          }
+       },
+       "Requests/resource_filters":[
+          {
+             "service_name":"YARN",
+             "component_name":"YARN_CLIENT",
+             "hosts":"$clusterhosts"
+          },
+          {
+             "service_name":"HDFS",
+             "component_name":"HDFS_CLIENT",
+             "hosts":"$clusterhosts"
+          }
+       ]
+    }' http://localhost:8080/api/v1/clusters/$clusterName/requests
+fi
