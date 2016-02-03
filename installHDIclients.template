@@ -1,0 +1,157 @@
+    {
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "clusterLocation": {
+            "type": "string",
+            "defaultValue": "West US",
+            "allowedValues": [ "West US" ]
+        },
+        "clusterName": {
+            "type": "string"
+        },
+        "clusterUserName": {
+            "type": "string",
+            "defaultValue": "admin"
+        },
+        "clusterUserPassword": {
+            "type": "securestring"
+        },
+        "sshUserName": {
+            "type": "string",
+            "defaultValue": "username"
+        },
+        "sshPassword": {
+            "type": "securestring"
+        },
+        "clusterStorageAccountName": {
+            "type": "string"
+        },
+        "clusterStorageAccountResourceGroup": {
+            "type": "string"
+        },
+        "clusterStorageType": {
+            "type": "string",
+            "defaultValue": "Standard_LRS",
+            "allowedValues": [
+                "Standard_LRS",
+                "Standard_GRS",
+                "Standard_ZRS"
+            ]
+        },
+        "clusterStorageAccountContainer": {
+            "type": "string"
+        },
+        "clusterHeadNodeCount": {
+            "type": "int",
+            "defaultValue": 1
+        },
+        "clusterWorkerNodeCount": {
+            "type": "int",
+            "defaultValue": 2
+        },
+        "edgeNodeIP": {
+            "type": "string"
+        }
+
+    },
+    "variables": {
+    },
+    "resources": [
+        {
+            "name": "[parameters('clusterStorageAccountName')]",
+            "type": "Microsoft.Storage/storageAccounts",
+            "location": "[parameters('clusterLocation')]",
+            "apiVersion": "2015-05-01-preview",
+            "dependsOn": [ ],
+            "tags": { },
+            "properties": {
+                "accountType": "[parameters('clusterStorageType')]"
+            }
+        },
+        {
+            "name": "[parameters('clusterName')]",
+            "type": "Microsoft.HDInsight/clusters",
+            "location": "[parameters('clusterLocation')]",
+            "apiVersion": "2015-03-01-preview",
+            "dependsOn": [
+                "[concat('Microsoft.Storage/storageAccounts/', parameters('clusterStorageAccountName'))]"
+            ],
+            "tags": { },
+            "properties": {
+                "clusterVersion": "3.2",
+                "osType": "Linux",
+                "clusterDefinition": {
+                    "kind": "hadoop",
+                    "configurations": {
+                        "gateway": {
+                            "restAuthCredential.isEnabled": true,
+                            "restAuthCredential.username": "[parameters('clusterUserName')]",
+                            "restAuthCredential.password": "[parameters('clusterUserPassword')]"
+                        }
+                    }
+                },
+                "storageProfile": {
+                    "storageaccounts": [
+                        {
+                            "name": "[concat(parameters('clusterStorageAccountName'),'.blob.core.windows.net')]",
+                            "isDefault": true,
+                            "container": "[parameters('clusterStorageAccountContainer')]",
+                            "key": "[listKeys(resourceId(parameters('clusterStorageAccountResourceGroup'), 'Microsoft.Storage/storageAccounts', parameters('clusterStorageAccountName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).key1]"
+                        }
+                    ]
+                },
+                "computeProfile": {
+                    "roles": [
+                        {
+                            "name": "headnode",
+                            "targetInstanceCount": "[parameters('clusterHeadNodeCount')]",
+                            "hardwareProfile": {
+                                "vmSize": "Large"
+                            },
+                            "osProfile": {
+                                "linuxOperatingSystemProfile": {
+                                    "username": "[parameters('sshUserName')]",
+                                    "password": "[parameters('sshPassword')]"
+                                }
+                            },
+                            "scriptActions": [
+                                {
+                                    "name": "installFusClient",
+                                    "uri": "https://hdiconfigactions.blob.core.windows.net/linuxrconfigactionv01/clientInstallerHN.sh",
+                                    "parameters": "[parameters('clusterUserName')] [parameters('clusterUserPassword')] [parameters('clusterName')] [concat('wasb://',parameters('clusterStorageAccountContainer'),'@',parameters('clusterStorageAccountName'),'.blob.core.windows.net')], [parameters('edgeNodeIP')]"
+                                }
+                            ]
+                        },
+                        {
+                            "name": "workernode",
+                            "targetInstanceCount": "[parameters('clusterWorkerNodeCount')]",
+                            "hardwareProfile": {
+                                "vmSize": "Large"
+                            },
+                            "osProfile": {
+                                "linuxOperatingSystemProfile": {
+                                    "username": "[parameters('sshUserName')]",
+                                    "password": "[parameters('sshPassword')]"
+                                }
+                            },
+                            "scriptActions": [
+                                {
+                                    "name": "installR",
+                                    "uri": "https://hdiconfigactions.blob.core.windows.net/linuxrconfigactionv01/clientInstallerWN.sh",
+                                    "parameters": ""
+                                }
+                            ]
+                        }
+                    ]
+                }
+            }
+        }
+    ],
+    "outputs": {
+        "cluster":{
+            "type" : "object",
+            "value" : "[reference(resourceId('Microsoft.HDInsight/clusters',parameters('clusterName')))]"
+        }
+    }
+}
