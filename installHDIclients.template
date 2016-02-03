@@ -117,8 +117,8 @@
                             },
                             "scriptActions": [
                                 {
-                                    "name": "installFusClient",
-                                    "uri": "https://hdiconfigactions.blob.core.windows.net/linuxrconfigactionv01/clientInstallerHN.sh",
+                                    "name": "installFusClientHN",
+                                    "uri": "https://raw.githubusercontent.com/psf/azureARMFusion/master/clientInstallerHN.sh",
                                     "parameters": "[parameters('clusterUserName')] [parameters('clusterUserPassword')] [parameters('clusterName')] [concat('wasb://',parameters('clusterStorageAccountContainer'),'@',parameters('clusterStorageAccountName'),'.blob.core.windows.net')], [parameters('edgeNodeIP')]"
                                 }
                             ]
@@ -137,9 +137,9 @@
                             },
                             "scriptActions": [
                                 {
-                                    "name": "installR",
-                                    "uri": "https://hdiconfigactions.blob.core.windows.net/linuxrconfigactionv01/clientInstallerWN.sh",
-                                    "parameters": ""
+                                    "name": "installFusClientWN",
+                                    "uri": "https://raw.githubusercontent.com/psf/azureARMFusion/master/clientInstallerWN.sh",
+                                    "parameters": "[parameters('clusterUserName')] [parameters('clusterUserPassword')] [parameters('clusterName')] [concat('wasb://',parameters('clusterStorageAccountContainer'),'@',parameters('clusterStorageAccountName'),'.blob.core.windows.net')], [parameters('edgeNodeIP')]"
                                 }
                             ]
                         }
