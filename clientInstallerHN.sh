@@ -29,6 +29,7 @@ if [[ $hn1 -eq 0 ]]; then
     clusterhosts=$(curl -s -u $clusterUN:$clusterPS http://localhost:8080/api/v1/clusters/$clusterName/hosts|grep host_name|awk '{print $3}')
     clusterhosts=${clusterhosts//\"}
     clusterhosts=$(echo $clusterhosts|sed 's/ /,/g')
+    echo "CLUSTERHOSTS: $clusterhosts"
 
 data="{
        \"RequestInfo\":{
@@ -52,6 +53,6 @@ data="{
           }
        ]
     }"
-
+echo "DATA: $data"
     curl -u $clusterUN:$clusterPS -H 'X-Requested-By: ambari' -X POST -d '$data' http://localhost:8080/api/v1/clusters/$clusterName/requests
 fi
