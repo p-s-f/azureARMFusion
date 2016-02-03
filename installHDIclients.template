@@ -4,8 +4,8 @@
     "parameters": {
         "clusterLocation": {
             "type": "string",
-            "defaultValue": "West US",
-            "allowedValues": [ "West US" ]
+            "defaultValue": "westeurope",
+            "allowedValues": [ "westeurope" ]
         },
         "clusterName": {
             "type": "string"
