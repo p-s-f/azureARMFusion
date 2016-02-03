@@ -119,7 +119,7 @@
                                 {
                                     "name": "installFusClientHN",
                                     "uri": "https://raw.githubusercontent.com/psf/azureARMFusion/master/clientInstallerHN.sh",
-                                    "parameters": "[parameters('clusterUserName')] [parameters('clusterUserPassword')] [parameters('clusterName')] [concat('wasb://',parameters('clusterStorageAccountContainer'),'@',parameters('clusterStorageAccountName'),'.blob.core.windows.net')], [parameters('edgeNodeIP')]"
+                                    "parameters": "[concat(parameters('clusterUserName'), ' ', parameters('clusterUserPassword'), ' ', parameters('clusterName'), ' ', 'wasb://',parameters('clusterStorageAccountContainer'),'@',parameters('clusterStorageAccountName'),'.blob.core.windows.net', ' ', parameters('edgeNodeIP'))]"
                                 }
                             ]
                         },
@@ -139,7 +139,7 @@
                                 {
                                     "name": "installFusClientWN",
                                     "uri": "https://raw.githubusercontent.com/psf/azureARMFusion/master/clientInstallerWN.sh",
-                                    "parameters": "[parameters('clusterUserName')] [parameters('clusterUserPassword')] [parameters('clusterName')] [concat('wasb://',parameters('clusterStorageAccountContainer'),'@',parameters('clusterStorageAccountName'),'.blob.core.windows.net')], [parameters('edgeNodeIP')]"
+                                    "parameters": "[concat(parameters('clusterUserName'), ' ', parameters('clusterUserPassword'), ' ', parameters('clusterName'), ' ', 'wasb://',parameters('clusterStorageAccountContainer'),'@',parameters('clusterStorageAccountName'),'.blob.core.windows.net', ' ', parameters('edgeNodeIP'))]"
                                 }
                             ]
                         }
