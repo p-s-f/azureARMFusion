@@ -18,4 +18,5 @@ dpkg -i /tmp/hdi-client.deb
 /var/lib/ambari-server/resources/scripts/configs.sh -u $clusterUN -p $clusterPS set localhost $clusterName core-site "fs.wasb.impl" "org.apache.hadoop.fs.azure.NativeAzureFileSystem"
 /var/lib/ambari-server/resources/scripts/configs.sh -u $clusterUN -p $clusterPS set localhost $clusterName core-site "fs.AbstractFileSystem.fusion.impl" "com.wandisco.fs.client.FusionAbstractFs"
 /var/lib/ambari-server/resources/scripts/configs.sh -u $clusterUN -p $clusterPS set localhost $clusterName core-site "fs.fusion.server" "$edgeNodeIP:8023"
+/var/lib/ambari-server/resources/scripts/configs.sh -u $clusterUN -p $clusterPS set localhost $clusterName core-site "fs.fusion.impl" "com.wandisco.fs.client.FusionHcfs"
 /var/lib/ambari-server/resources/scripts/configs.sh -u $clusterUN -p $clusterPS set localhost $clusterName yarn-site "fs.AbstractFileSystem.fusion.impl" "com.wandisco.fs.client.FusionAbstractFs"
