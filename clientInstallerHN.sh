@@ -54,6 +54,9 @@ echo "DATA: $data"
 
     #stop
     curl -u $clusterUN:$clusterPS "localhost:8080/api/v1/clusters/$clusterName/services?" -X PUT -H 'Accept: application/json, text/javascript, */*; q=0.01' --compressed -H 'Content-Type: application/x-www-form-urlencoded; charset=UTF-8' -H 'X-Requested-By: X-Requested-By' -H 'X-Requested-With: XMLHttpRequest' --data "{\"RequestInfo\":{\"context\":\"_PARSE_.STOP.ALL_SERVICES\",\"operation_level\":{\"level\":\"CLUSTER\",\"cluster_name\":\"$clusterName\"}},\"Body\":{\"ServiceInfo\":{\"state\":\"INSTALLED\"}}}"
+
+    sleep 100
+    
     #start
     curl -u $clusterUN:$clusterPS "localhost:8080/api/v1/clusters/$clusterName/services?" -X PUT -H 'Accept: application/json, text/javascript, */*; q=0.01' --compressed -H 'Content-Type: application/x-www-form-urlencoded; charset=UTF-8' -H 'X-Requested-By: X-Requested-By' -H 'X-Requested-With: XMLHttpRequest' --data "{\"RequestInfo\":{\"context\":\"_PARSE_.START.ALL_SERVICES\",\"operation_level\":{\"level\":\"CLUSTER\",\"cluster_name\":\"$clusterName\"}},\"Body\":{\"ServiceInfo\":{\"state\":\"STARTED\"}}}"
 
