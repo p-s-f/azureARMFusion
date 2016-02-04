@@ -29,35 +29,6 @@ if [[ $hn1 -eq 0 ]]; then
 
     /var/lib/ambari-server/resources/scripts/configs.sh -u $clusterUN -p $clusterPS set localhost $clusterName mapred-site "mapreduce.application.classpath" "$currentMapredCP"
 
-
-    sleep 10
-    #unset IFS
-    #clusterhosts=$(curl -s -u $clusterUN:$clusterPS http://localhost:8080/api/v1/clusters/$clusterName/hosts|grep host_name|awk '{print $3}')
-    #clusterhosts=${clusterhosts//\"}
-    #clusterhosts=$(echo $clusterhosts|sed -e 's/ /,/g' -e 's/,zk.*//g')
-
-    #echo "CLUSTERHOSTS: $clusterhosts"
-
-    #data="{
-    #   \"RequestInfo\":{
-    #      \"command\":\"RESTART\",
-    #      \"context\":\"Restart HDFS Client\",
-    #      \"operation_level\":{
-    #         \"level\":\"HOST\",
-    #         \"cluster_name\":\"$clusterName\"
-    #      }
-    #   },
-    #   \"Requests/resource_filters\":[
-    #      {
-    #         \"service_name\":\"HDFS\",
-    #         \"component_name\":\"HDFS_CLIENT\",
-    #         \"hosts\":\"$clusterhosts\"
-    #      }
-    #   ]
-    #}"
-    #echo "DATA: $data"
-    #curl -u $clusterUN:$clusterPS -H 'X-Requested-By: ambari' -X POST -d '$data' http://localhost:8080/api/v1/clusters/$clusterName/requests
-
     #stop
     curl -u $clusterUN:$clusterPS "localhost:8080/api/v1/clusters/$clusterName/services?" -X PUT -H 'Accept: application/json, text/javascript, */*; q=0.01' --compressed -H 'Content-Type: application/x-www-form-urlencoded; charset=UTF-8' -H 'X-Requested-By: X-Requested-By' -H 'X-Requested-With: XMLHttpRequest' --data "{\"RequestInfo\":{\"context\":\"_PARSE_.STOP.ALL_SERVICES\",\"operation_level\":{\"level\":\"CLUSTER\",\"cluster_name\":\"$clusterName\"}},\"Body\":{\"ServiceInfo\":{\"state\":\"INSTALLED\"}}}"
 
