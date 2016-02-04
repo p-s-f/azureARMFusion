@@ -25,7 +25,7 @@ if [[ $hn1 -eq 0 ]]; then
     /var/lib/ambari-server/resources/scripts/configs.sh -u $clusterUN -p $clusterPS set localhost $clusterName yarn-site "fs.AbstractFileSystem.fusion.impl" "com.wandisco.fs.client.FusionAbstractFs"
 
     currentMapredCP=$(grep PWD /etc/hadoop/conf/mapred-site.xml | sed -e 's/<value>//g' -e 's#</value>##g#')
-    currentMapredCP="$currentMapredCP:/opt/wandisco/fusion/client/lib"
+    currentMapredCP="$currentMapredCP:/opt/wandisco/fusion/client/lib/*"
 
     /var/lib/ambari-server/resources/scripts/configs.sh -u $clusterUN -p $clusterPS set localhost $clusterName mapred-site "mapreduce.application.classpath" "$currentMapredCP"
 
