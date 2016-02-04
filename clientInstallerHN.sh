@@ -28,10 +28,11 @@ if [[ $hn1 -eq 0 ]]; then
     unset IFS
     clusterhosts=$(curl -s -u $clusterUN:$clusterPS http://localhost:8080/api/v1/clusters/$clusterName/hosts|grep host_name|awk '{print $3}')
     clusterhosts=${clusterhosts//\"}
-    clusterhosts=$(echo $clusterhosts|sed 's/ /,/g')
-    clusterhosts=$(echo $clusterhosts|sed 's/,zk.*//g')
+    clusterhosts=$(sed -e 's/ /,/g' -e 's/,zk.*//g' <<<"$clusterhosts")
+
     echo "CLUSTERHOSTS: $clusterhosts"
-    
+    echo "CLUSTERHOSTSB: $clusterhostsB"
+
     data="{
        \"RequestInfo\":{
           \"command\":\"RESTART\",
