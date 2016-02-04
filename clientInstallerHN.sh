@@ -29,9 +29,10 @@ if [[ $hn1 -eq 0 ]]; then
     clusterhosts=$(curl -s -u $clusterUN:$clusterPS http://localhost:8080/api/v1/clusters/$clusterName/hosts|grep host_name|awk '{print $3}')
     clusterhosts=${clusterhosts//\"}
     clusterhosts=$(echo $clusterhosts|sed 's/ /,/g')
+    clusterhosts=$(echo $clusterhosts|sed 's/,zk.*//g')
     echo "CLUSTERHOSTS: $clusterhosts"
-
-data="{
+    
+    data="{
        \"RequestInfo\":{
           \"command\":\"RESTART\",
           \"context\":\"Restart HDFS Client and YARN Client\",
