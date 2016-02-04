@@ -35,18 +35,13 @@ if [[ $hn1 -eq 0 ]]; then
     data="{
        \"RequestInfo\":{
           \"command\":\"RESTART\",
-          \"context\":\"Restart HDFS Client and YARN Client\",
+          \"context\":\"Restart HDFS Client\",
           \"operation_level\":{
              \"level\":\"HOST\",
              \"cluster_name\":\"$clusterName\"
           }
        },
        \"Requests/resource_filters\":[
-          {
-             \"service_name\":\"YARN\",
-             \"component_name\":\"YARN_CLIENT\",
-             \"hosts\":\"$clusterhosts\"
-          },
           {
              \"service_name\":\"HDFS\",
              \"component_name\":\"HDFS_CLIENT\",
@@ -55,5 +50,11 @@ if [[ $hn1 -eq 0 ]]; then
        ]
     }"
 echo "DATA: $data"
-    curl -u $clusterUN:$clusterPS -H 'X-Requested-By: ambari' -X POST -d '$data' http://localhost:8080/api/v1/clusters/$clusterName/requests
+    #curl -u $clusterUN:$clusterPS -H 'X-Requested-By: ambari' -X POST -d '$data' http://localhost:8080/api/v1/clusters/$clusterName/requests
+
+    #stop
+    curl -u $clusterUN:$clusterPS "https:/localhost:8080/api/v1/clusters/$clusterName/services?" -X PUT -H 'Accept: application/json, text/javascript, */*; q=0.01' --compressed -H 'Content-Type: application/x-www-form-urlencoded; charset=UTF-8' -H 'X-Requested-By: X-Requested-By' -H 'X-Requested-With: XMLHttpRequest' --data "{\"RequestInfo\":{\"context\":\"_PARSE_.STOP.ALL_SERVICES\",\"operation_level\":{\"level\":\"CLUSTER\",\"cluster_name\":\"$clusterName\"}},\"Body\":{\"ServiceInfo\":{\"state\":\"INSTALLED\"}}}"
+    #start
+    curl -u $clusterUN:$clusterPS "https:/localhost:8080/api/v1/clusters/$clusterName/services?" -X PUT -H 'Accept: application/json, text/javascript, */*; q=0.01' --compressed -H 'Content-Type: application/x-www-form-urlencoded; charset=UTF-8' -H 'X-Requested-By: X-Requested-By' -H 'X-Requested-With: XMLHttpRequest' --data "{\"RequestInfo\":{\"context\":\"_PARSE_.START.ALL_SERVICES\",\"operation_level\":{\"level\":\"CLUSTER\",\"cluster_name\":\"$clusterName\"}},\"Body\":{\"ServiceInfo\":{\"state\":\"STARTED\"}}}"
+
 fi
