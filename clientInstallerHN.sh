@@ -31,7 +31,6 @@ if [[ $hn1 -eq 0 ]]; then
     clusterhosts=$(sed -e 's/ /,/g' -e 's/,zk.*//g' <<<"$clusterhosts")
 
     echo "CLUSTERHOSTS: $clusterhosts"
-    echo "CLUSTERHOSTSB: $clusterhostsB"
 
     data="{
        \"RequestInfo\":{
