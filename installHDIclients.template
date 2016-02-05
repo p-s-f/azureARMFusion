@@ -2,10 +2,23 @@
     "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "clusterLocation": {
-            "type": "string",
-            "defaultValue": "westeurope",
-            "allowedValues": [ "westeurope" ]
+        "clusterLocation":{
+                          "type": "string",
+                          "allowedValues": [
+                              "Central US",
+                              "East Asia",
+                              "East US",
+                              "Japan East",
+                              "Japan West",
+                              "North Europe",
+                              "South Central US",
+                              "Southeast Asia",
+                              "West Europe",
+                              "West US"
+                          ],
+                          "metadata": {
+                              "description": "The location where all azure resources will be deployed."
+                          }
         },
         "clusterName": {
             "type": "string"
@@ -58,25 +71,11 @@
     "variables": {
     },
     "resources": [
-        {
-            "name": "[parameters('clusterStorageAccountName')]",
-            "type": "Microsoft.Storage/storageAccounts",
-            "location": "[parameters('clusterLocation')]",
-            "apiVersion": "2015-05-01-preview",
-            "dependsOn": [ ],
-            "tags": { },
-            "properties": {
-                "accountType": "[parameters('clusterStorageType')]"
-            }
-        },
-        {
+          {
             "name": "[parameters('clusterName')]",
             "type": "Microsoft.HDInsight/clusters",
             "location": "[parameters('clusterLocation')]",
             "apiVersion": "2015-03-01-preview",
-            "dependsOn": [
-                "[concat('Microsoft.Storage/storageAccounts/', parameters('clusterStorageAccountName'))]"
-            ],
             "tags": { },
             "properties": {
                 "clusterVersion": "3.2",
